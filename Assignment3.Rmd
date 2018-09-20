@@ -1,0 +1,258 @@
+---
+title: "Assignment3_rmtd"
+author: "Anand R"
+date: "September 15, 2018"
+output: 
+     html_document:
+       keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+# make new GIT repository
+
+Below are console commands for GITHUB created in GIT (local)
+<!--'ExampleProject' 
+mkdir \GIT\ExampleProject -- make new GIT repository
+cd \GIT\ExampleProject -- Get in to the new ExampleProject directory
+
+git init # initialize GIT repository
+Initialized empty Git repositry in C:/Anands/DW_HW/GIT/ExampleProject/.git
+
+Add README to the repository 
+git add README.md
+
+git commit -a -m "First Commit, created README file" -- Commits changes
+
+"https://github.com/caesar0301/awesome-public-datasets." cloned to local repository
+ Extracted file path - C:/Anands/DS_HW/GIT/ExampleProject/titanic.csv extracted
+ -->
+ 
+# Answer 2.b
+ 
+```{r}
+df <- read.table("C:/Anands/DS_HW/GIT/ExampleProject/titanic.csv", header = T, sep = ",")
+ gender <- df$Sex
+ pers <- df$PassengerId
+ summary(gender)
+ # Counts of total gender population
+barplot(table(gender), 
+main="Freq diag of gender in Titanic",
+xlab="Sex",
+ylab="Count",
+border="red",
+col="blue",
+density=8
+)
+# Bar frequency plot of gender
+```
+
+#Answer 2.c
+output the means of Age, Fare, and Survival.  Make sure the output is a real number for all three means.
+```{r}
+ages <- c(lapply(df$Age, is.numeric)) # verifying if numeric
+meanage <- mean(df$Age, trim = 0.10,  na.rm = TRUE)
+print (meanage) # calculate mean
+meanfare<-mean(df$Fare, trim = 0.10, na.rm = TRUE)
+print(meanfare) #calculate mean Fare
+Surv <- c(lapply(df$Survived, is.numeric)) # verify if numeric
+meansurv<-mean(df$Survived, trim= 0.10 , na.rm = TRUE)
+print(meansurv)
+      
+```
+
+# Function building Part A
+<!--
+# a.	Create objects for the median Age, the minimum and maximum Duration of sleep, 
+and the mean and standard deviation of the Rosenberg Self Esteem scale (RSES). 
+You may need to specify a few options like in Problem 2 and live session. Install.packages("cowsay") -- Install.packages("readr"). 
+-->
+
+
+```{r echo=TRUE}
+
+meadvalues <- function( col)
+{
+    colVal <- col
+    meadVal <- median(colVal, na.rm = TRUE) #Median
+
+}
+mnvalues <- function(col)
+{
+    colVal <- col
+    mnVal <- round(mean(colVal, na.rm = TRUE),2) #Mean
+
+}
+ 
+sdvalues <- function(col)
+{
+    colVal <- col
+    sdVal <- round(sd(colVal, na.rm = TRUE),2) #SD
+
+}  
+   
+minvalues <- function(col)
+{
+    colVal <- col
+    minVal <- min(colVal,na.rm = TRUE) #Minimum
+    maxVal <- max(colVal,na.rm = TRUE)  #Maximum
+    ranger <- round(maxVal-minVal, 2) 
+}
+
+```
+
+#Function calls Part B & part C
+<!-- These are reading data into df and function calls
+Sleep data averages detailed as per below codes -->
+
+```{r echo=FALSE}
+
+dfinf <- readr::read_csv("sleepdata_01.csv")
+dfval<- data.frame(dfinf$Age, dfinf$Duration, dfinf$RSES)
+#Function call here 
+report <- data.frame(meadvalues(dfinf$Age),minvalues(dfinf$Duration),mnvalues(dfinf$RSES),sdvalues(dfinf$RSES))
+names(report) <- c("MedianAge", "SelfEsteem", "DurationRange", "SE_SD")
+report
+```
+
+# 538 Story of recent graduates 
+<!--
+#Install packages 538 -- Story -- 
+question (4 - a,b)
+Download the package and data frame to show in the detailed list from data frame.
+-->
+
+```{r}
+#install.packages("fivethirtyeight")
+# If you haven't installed the remotes package yet, do so:
+#install.packages("remotes")
+#remotes::install_github("rudeboybert/fivethirtyeight", build_vignettes = TRUE)
+library(fivethirtyeight)
+
+# To see a list of all data sets:
+data(package = "fivethirtyeight")
+
+```
+
+#538 Recent graduates
+
+<!-- 538 package file 22 gives information on recent graduates and their job descriptions with major details.
+detailed list of the data sets.
+the dimensions and column names of this set.
+question 4 c d
+-->
+
+```{r}
+#filer <- "https://github.com/AnandRHUB/fivethirtyeight/blob/master/data/college_recent_grads.rda"
+
+df <- read.csv("/Anands/DS_HW/college_recent_grads.csv", header = T)
+
+#Could not read RDA due to reasons beyond my knowledge as the file permissions did not allow this.
+# Hence got the csv file for the analysis
+
+dfr <- as.data.frame(df)
+
+dim(dfr)
+
+#read the data
+head(df)
+sapply(df, class)
+dim(df) # gives the dimension of the data frame
+names(df) #prints all columns
+class(df)
+ncol(df) # no of columns
+
+```
+
+#Major data sets in a matrix
+<!-- Question5 a b c
+
+gives dimension and frequency of the selected columns data frame.
+Generate a count of each unique major_category in the data frame.  I recommend using libraries to help.  To be clear, this should look like a matrix or data frame containing the major_category and the frequency it occurs in the dataset.  Assign it to major_count.
+-->
+
+```{r echo = TRUE}
+# select all major columns 
+suppressMessages(library('dplyr')) # package library
+
+dim(dfr) # Dimensions of the matrix
+
+ncol(dfr)
+
+names(dfr)
+#Assign to major_count the matrix.
+major_count <- as.matrix(data.frame(dfr$Major, dfr$Major_category, dfr$Major_code, count(dfr, dfr$Major)))
+
+#df1 <- as.matrix(data.frame(dfr$Major, dfr$Major_category, dfr$Major_code, count(dfr1, dfr$Major)))
+
+#a <- as.data.frame(dfr$Major,count(dfr, dfr$Major_category), row.names = NULL, optional = TRUE, make.names = TRUE,  stringsAsFactors = default.stringsAsFactors())
+
+#b <- as.data.frame(dfr$Major,count(dfr,dfr$Major_code),row.names = NULL, optional = TRUE, make.names = TRUE,  stringsAsFactors = default.stringsAsFactors())
+
+#mab <- data.frame(merge(x=a , y=b, by = "dfr$Major", all.x=TRUE))
+
+#merge(x=df1 , y=a, by.x= "df1$Major", by.y ="a$Major", all.x=TRUE)
+
+#names(major_count) <- c("Major","Major_freq", "Maj_Cat", "Cat freq", "Maj_Code", "Code_freq"
+
+#To create csv file
+
+write.table(major_count, "/Anands/DS_HW/GIT/DS_HomeWork//Data/MainData.csv", sep = ",", row.names = FALSE)
+
+
+# frequency assigned to major_count
+#names(major_count) <- c("Major","Major_freq", "Maj_Cat", "Cat freq", "Maj_Code", "Code_freq")
+
+
+par(las=2)
+
+barplot (major_count, width = 1, 
+main = "Major counts",
+xlab = "Freq",
+ylab = "Major",
+col = "red",
+#names.arg = c("Major", "Major_category","Major_code"),
+ylim = c(0,180),
+horiz = TRUE)
+```
+
+#Code Book
+
+<!--
+a.	Start a new repository on GitHub for your SMU MSDS homework.  On your local device, make sure there is a directory for Homework at the minimum; you are welcome to add whatever you would like to this repo in addition to your requirements here.
+-->
+
+#Created /Anands/DS_HW/GIT/ExampleProject in GIT local.
+*This project is created to handle the Data science collaborative work between cohorts of Fall 2018 class
+
+* The project is called ExampleProject
+* Created on 9/15/2018 by Anand Rajan
+* Created the repo in GITHUB and cloned it to local. 
+
+# Steps to setup the repository
+
+1. Opened the GIT in command prompt
+2. echo "# DS_HomeWork" >> README.md
+3. echo "This is created by Anand Rajan on 9/16/2018 for collaborative work on github" >> README.md
+
+4. git init
+5. git add README.md
+6. git commit -m "first commit"
+7. git remote add origin https://github.com/AnandRHUB/DS_HomeWork.git
+8. git push -u origin master
+the URL is 
+git clone https://github.com/AnandRHUB/DS_HomeWork.git
+
+Location of rmd and html files are in https://github.com/AnandRHUB/DS_HomeWork/RMarkdown.git
+
+-->
+#The End
+
