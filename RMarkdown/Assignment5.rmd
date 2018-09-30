@@ -1,1 +1,204 @@
+---
+title: "Assignment5"
+author: "Anand R"
+date: "September 30, 2018"
+output: 
+   html_document:
+      keep_md: true
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Doing Data Science - Tidy Data
+Live session Unit 05 assignment
+
+Question 1: 
+<!--The client expects a baby soon , for which we need to select names from a repository of names. The raw data is provided.
+The file is yob2016.txt with children born in 2016 in US.
+Consist of Firstname Gender and number of children count with the name.
+-->
+
+```{r echo = TRUE}
+childNames <- read.delim("C:/Anands/DS_HW/yob2016.txt",header = FALSE, sep = ";")
+head(childNames)
+# assign the child names to a data frame.
+cndf <- data.frame(childNames)
+
+colnames(cndf)<- c("first_name","gender","amount_of_children")
+
+fn <- grep("y{3}" , cndf$first_name)
+
+stri <- c(grep("yyy", cndf$first_name , value = TRUE))
+
+stri
+
+y2016 <- cndf[-grep("y{3}" , cndf$first_name),] 
+
+delf <- grep("y{3}" , y2016$first_name)
+
+head(delf) 
+# the record has been deleted
+
+#To create csv file y2016.csv in the data directory for github
+
+write.table(y2016, "/Anands/DS_HW/GIT/DS_HomeWork/Data/y2016.csv", sep = ",", row.names = FALSE)
+
+```
+<!--End of part 1 -->
+
+#Data Merging  - Part 2
+
+<!-- Utilize the file yob2015.txt to import to a dataframe and try to merge the file with the earlier file.
+The final file will not have any NA values in the amount of children rows.
+-->
+```{r echo = TRUE}
+childNames2 <- read.delim("C:/Anands/DS_HW/yob2015.txt",header = FALSE, sep = ",")
+
+#Display last 10 rows.
+tail(childNames2,10)
+
+# assign the child names to a data frame.
+y2015 <- data.frame(childNames2)
+
+colnames(y2015)<- c("first_name","gender","amount_of_children2")
+
+final <- merge(y2016, y2015, by=c("first_name"))
+
+```
+#interesting facts on the last ten rows in y2015.
+Interesting fact about these 10 tail rows are
+1. All of them start with 'Z'.
+2. All are males by gender
+3. All of them have amount of children as 5 nos.
+
+#Data Summary
+Add amount of 2015 and 2016 (amount of children) together and sort data to show top 10 popular girl names from the two years combined.
+
+```{r}
+# Creating new column
+final$Total <- NA
+# Count total and asssign to Total
+final$Total <- c(final$amount_of_children + final$amount_of_children2)
+
+# sort data by top counts
+final <- dplyr::arrange(final, desc(final$Total))
+
+top10 <- head(final,10)
+
+# people given top 10 popular names
+totl <- sum(top10$Total)
+
+totl # this gives total number of popular names in two years.
+
+fgirl <- subset(x=final, final$gender.x=='F' & final$gender.y =='F' )
+
+#Arrange top 10 girls in the final girls data frame
+
+fgirl <- dplyr::arrange(fgirl, desc(fgirl$Total))
+
+top10girls <- head(fgirl,10)
+
+csvdf <- data.frame(top10girls$first_name, top10girls$Total)
+
+colnames(csvdf)<- c("first_name","Total")
+
+csvdf
+
+#To create csv file top10girl_names.csv in the data directory for github
+
+write.table(csvdf, "/Anands/DS_HW/GIT/DS_HomeWork/Data/top10girl_names.csv", sep = ",", row.names = FALSE)
+
+```
+
+#The CodeBook on assignment 5
+
+* Created on 9/30/2018 by Anand Rajan
+
+<!--
+a.	GitHub for your SMU MSDS homework.  
+
+The homework assignment 5 is created two files in the local GIT directory
+#Created in /Anands/DS_HW/GIT/DS_HomeWork in GIT local.
+*This project is created to handle the Data science collaborative work between cohorts of Fall 2018 class.
+
+Also created the output data files in /Anands/DS_HW/GIT/DS_HomeWork/Data
+and the RMarkdown files in /Anands/DS_HW/GIT/DS_HomeWork/RMarkdown directory path.
+-->
+
+#Data munging:
+
+<!--
+The data is read in to data frame from yob2016.txt
+assigned the child names to a data frame.
+assigned column names to the data.
+
+Identify the data that had the 'yyy' to ther first name.
+display the name with 'yyy' at the end.
+
+Eliminate the rwo as it was a duplicate row after cleansing.
+The record has been deleted
+
+To create csv file y2016.csv in the data directory for github
+write.table was used.
+-->
+
+#Merging
+
+Read another csv file yob2015 for merge.
+
+Merged 2015 and 2016 files together.
+
+
+
+#Data Summary
+
+* Creted new column "Total" in the temple.
+
+The final dataframe has first_name, gender and amount of children from each data set. and create the total.
+
+Sorted the data by desc total.
+
+Created a list of top 10 names from 2015 and 2016.
+
+Omit boy names from the list to create top 10 girl names.
+
+* Created in /Anands/DS_HW/GIT/DS_HomeWork in GIT local.
+
+
+Also created the output data files in /Anands/DS_HW/GIT/DS_HomeWork/Data
+and the RMarkdown files in /Anands/DS_HW/GIT/DS_HomeWork/RMarkdown directory path.
+
+
+#Files Location information
+
+location of data files in 
+
+* https://github.com/AnandRHUB/DS_HomeWork/Data
+
+Location of rmd and html files are in 
+
+* https://github.com/AnandRHUB/DS_HomeWork/RMarkdown
+
+The Rmarkdown is in https://github.com/AnandRHUB/DS_HomeWork/RMarkdown/Assignment5.rmd
+
+The matching html is in https://github.com/AnandRHUB/DS_HomeWork/RMarkdown/Assignment5.html
+
+
+The data files y2016 consist of baby names born in US for the year 2016.
+The columns of interest are first_name, gender and amount of children.
+
+The data file for 2015 was merged with this file to get the final output for two years.
+
+The final data set stored in 
+
+The second data file is a set of top 10 girl in
+
+* /Anands/DS_HW/GIT/DS_HomeWork/Data/top10girl_names.csv
+
+This file contains data about top 10 girl names chosen between 2015 and 2016 for the client's benefit as the client is expecting  girl baby this year.
+
+#The End
